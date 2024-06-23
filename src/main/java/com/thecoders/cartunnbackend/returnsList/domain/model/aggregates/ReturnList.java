@@ -1,8 +1,13 @@
 package com.thecoders.cartunnbackend.returnsList.domain.model.aggregates;
+import com.thecoders.cartunnbackend.payment.domain.model.aggregates.Cart;
 import com.thecoders.cartunnbackend.returnsList.domain.model.commands.CreateReturnListCommand;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.apache.logging.log4j.util.Strings;
+
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Entity
 @Table(name = "return_list")
@@ -23,6 +28,9 @@ public class ReturnList {
     private String status;
     @Column(name = "image", nullable = false)
     private String image;
+
+    //@ManyToMany(mappedBy = "assignedStatus")
+    //private Set<Payment> paymentSet = new HashSet<>();
 
 
     public ReturnList(){
