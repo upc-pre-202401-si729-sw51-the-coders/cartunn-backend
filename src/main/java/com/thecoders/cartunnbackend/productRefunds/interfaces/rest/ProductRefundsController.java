@@ -2,6 +2,7 @@ package com.thecoders.cartunnbackend.productRefunds.interfaces.rest;
 
 import com.thecoders.cartunnbackend.productRefunds.domain.model.queries.GetAllProductRefundsQuery;
 import com.thecoders.cartunnbackend.productRefunds.domain.model.queries.GetProductRefundByIdQuery;
+import com.thecoders.cartunnbackend.productRefunds.domain.model.queries.GetProductRefundByOrderIdQuery;
 import com.thecoders.cartunnbackend.productRefunds.domain.services.ProductRefundCommandService;
 import com.thecoders.cartunnbackend.productRefunds.domain.services.ProductRefundQueryService;
 import com.thecoders.cartunnbackend.productRefunds.interfaces.rest.resources.CreateProductRefundResource;
@@ -37,14 +38,15 @@ public class ProductRefundsController {
     public ResponseEntity<ProductRefundResource> createProductRefund(@RequestBody CreateProductRefundResource createProductRefundResource) {
         var createProductRefundCommand = CreateProductRefundCommandFromResourceAssembler.toCommandFromResource(createProductRefundResource);
         var productRefundId = productRefundCommandService.handle(createProductRefundCommand);
-        if (productRefundId == 0L) return ResponseEntity.badRequest().build();
 
-        var getProductRefundByIdQuery = new GetProductRefundByIdQuery(productRefundId);
-        var productRefund = productRefundQueryService.handle(getProductRefundByIdQuery);
+        System.out.println("productRefundId: " + productRefundId);
+        var getProductRefundByOrderIdQuery = new GetProductRefundByOrderIdQuery(createProductRefundResource.orderId());
+        var productRefund = productRefundQueryService.handle(getProductRefundByOrderIdQuery);
         if(productRefund.isEmpty()){
             return ResponseEntity.badRequest().build();
         }
-        var productRefundResource = ProductRefundResourceFromEntityAssembler.toResourceFromEntity(productRefund.get());
+
+        var productRefundResource = ProductRefundResourceFromEntityAssembler.toResourceFromEntity(productRefund.get(0));
         return new ResponseEntity<>(productRefundResource, HttpStatus.CREATED);
     }
 

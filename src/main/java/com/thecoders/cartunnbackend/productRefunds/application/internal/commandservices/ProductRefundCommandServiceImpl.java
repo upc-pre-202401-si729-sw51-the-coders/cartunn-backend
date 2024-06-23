@@ -5,6 +5,7 @@ import com.thecoders.cartunnbackend.productRefunds.domain.model.commands.CreateP
 import com.thecoders.cartunnbackend.productRefunds.domain.model.commands.UpdateProductRefundCommand;
 import com.thecoders.cartunnbackend.productRefunds.domain.services.ProductRefundCommandService;
 import com.thecoders.cartunnbackend.productRefunds.infrastructure.jpa.persistence.ProductRefundRepository;
+import com.thecoders.cartunnbackend.purchasing.infrastructure.persitence.jpa.repositories.PurchasingOrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,17 +13,21 @@ import java.util.Optional;
 @Service
 public class ProductRefundCommandServiceImpl implements ProductRefundCommandService {
     private final ProductRefundRepository productRefundRepository;
+    private final PurchasingOrderRepository purchasingOrderRepository;
 
-    public ProductRefundCommandServiceImpl(ProductRefundRepository productRefundRepository){
+    public ProductRefundCommandServiceImpl(ProductRefundRepository productRefundRepository,PurchasingOrderRepository purchasingOrderRepository){
         this.productRefundRepository = productRefundRepository;
+        this.purchasingOrderRepository = purchasingOrderRepository;
     }
 
     @Override
     public Long handle(CreateProductRefundCommand command) {
+        var order = purchasingOrderRepository.findById(command.orderId())
+                .orElseThrow(() -> new IllegalArgumentException("Order does not exist"));
         if (productRefundRepository.existsByTitle(command.title())) {
             throw new IllegalArgumentException("Product refund with title " + command.title() + " already exists");
         }
-        var productRefund = new ProductRefund(command);
+        var productRefund = new ProductRefund(command,order);
         try {
             productRefundRepository.save(productRefund);
             return productRefund.getId();

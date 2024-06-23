@@ -4,6 +4,7 @@ package com.thecoders.cartunnbackend.productRefunds.domain.model.aggregates;
 import com.thecoders.cartunnbackend.productRefunds.domain.model.commands.CreateProductRefundCommand;
 import com.thecoders.cartunnbackend.profiles.domain.model.aggregates.Profile;
 import com.thecoders.cartunnbackend.profiles.domain.model.commands.CreateProfileCommand;
+import com.thecoders.cartunnbackend.purchasing.domain.model.aggregates.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.apache.logging.log4j.util.Strings;
@@ -13,6 +14,12 @@ import org.apache.logging.log4j.util.Strings;
 @Table(name = "product_refunds")
 
 public class ProductRefund {
+
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,18 +40,16 @@ public class ProductRefund {
         this.status = Strings.EMPTY;
     }
 
-    public ProductRefund(String title,String description, String status){
+    public ProductRefund(Order order,String title,String description, String status){
         this();
+        this.order = order;
         this.title = title;
         this.description = description;
         this.status = status;
     }
 
-    public ProductRefund(CreateProductRefundCommand command){
-        this();
-        this.title = command.title();
-        this.description = command.description();
-        this.status = command.status();
+    public ProductRefund(CreateProductRefundCommand command, Order order){
+        this(order, command.title(), command.description(), command.status());
     }
 
     public ProductRefund updateInformation(String title, String description, String status){

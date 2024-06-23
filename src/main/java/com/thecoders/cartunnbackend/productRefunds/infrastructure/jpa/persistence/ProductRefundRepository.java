@@ -4,6 +4,7 @@ import com.thecoders.cartunnbackend.productRefunds.domain.model.aggregates.Produ
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRefundRepository  extends JpaRepository<ProductRefund,Long> {
@@ -11,4 +12,7 @@ public interface ProductRefundRepository  extends JpaRepository<ProductRefund,Lo
     boolean existsByTitleAndIdIsNot(String title, Long id);
 
     boolean existsByTitle(String title);
+
+    List<ProductRefund> findAllByOrderId(Long orderId);
+    List<ProductRefund> findByOrderId(Long orderId);
 }

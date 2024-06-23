@@ -6,6 +6,7 @@ import com.thecoders.cartunnbackend.productRefunds.interfaces.rest.resources.Cre
 public class CreateProductRefundCommandFromResourceAssembler {
     public static CreateProductRefundCommand toCommandFromResource(CreateProductRefundResource resource){
         return new CreateProductRefundCommand(
+                resource.orderId(),
                 resource.title(),
                 resource.description(),
                 resource.status()

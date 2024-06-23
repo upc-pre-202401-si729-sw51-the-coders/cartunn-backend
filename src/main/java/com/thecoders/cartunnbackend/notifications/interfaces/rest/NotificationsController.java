@@ -37,7 +37,8 @@ public class NotificationsController {
     public ResponseEntity<NotificationResource> createNotification(@RequestBody CreateNotificationResource createNotificationResource) {
         var createNotificationCommand = CreateNotificationCommandFromResourceAssembler.toCommandFromResource(createNotificationResource);
         var notificationId = notificationCommandService.handle(createNotificationCommand);
-       System.out.println("notificationId: " + notificationId);
+
+        System.out.println("notificationId: " + notificationId);
         var getNotificationByOrderIdQuery = new GetNotificationByOrderIdQuery(createNotificationResource.orderId());
         var notification = notificationQueryService.handle(getNotificationByOrderIdQuery);
         if (notification.isEmpty()) {
